@@ -9,6 +9,7 @@ from typing import Optional
 from text_extraction_system.config import get_settings
 from text_extraction_system.pdf.pdf import raise_from_pdfbox_error_messages
 from text_extraction_system.processes import raise_from_process
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -29,8 +30,7 @@ def remove_ocr_layer(pdf_file_name: str,
         if pdf_password:
             args += ['--password', pdf_password]
 
-        completed_process: CompletedProcess = subprocess.run(
-            args,
+        completed_process: CompletedProcess = safe_command.run(subprocess.run, args,
             check=False,
             timeout=timeout_sec,
             universal_newlines=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)

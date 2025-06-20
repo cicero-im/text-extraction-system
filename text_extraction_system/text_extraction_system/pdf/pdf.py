@@ -24,6 +24,7 @@ from text_extraction_system.config import get_settings
 from text_extraction_system.pdf.utils import pikepdf_opened_w_error
 from text_extraction_system.processes import raise_from_process, render_process_msg
 from text_extraction_system.utils import page_num_to_fn
+from security import safe_command
 
 log = getLogger(__name__)
 
@@ -99,7 +100,7 @@ def extract_pdf_images(pdf_fn: str,
 
     args += [pdf_fn]
 
-    completed_process: CompletedProcess = subprocess.run(args, check=False, timeout=timeout_sec,
+    completed_process: CompletedProcess = safe_command.run(subprocess.run, args, check=False, timeout=timeout_sec,
                                                          universal_newlines=True, stderr=PIPE, stdout=PIPE)
     raise_from_process(log, completed_process, process_title=lambda: f'Extract page images from {pdf_fn}')
 
@@ -352,7 +353,7 @@ def merge_pdf_pages(original_pdf_fn: str,
         if original_pdf_password:
             args += ['--password', original_pdf_password]
 
-        completed_process: CompletedProcess = subprocess.run(args,
+        completed_process: CompletedProcess = safe_command.run(subprocess.run, args,
                                                              check=False,
                                                              timeout=timeout_sec,
                                                              universal_newlines=True, stderr=PIPE, stdout=PIPE)
@@ -379,7 +380,7 @@ def rotate_pdf_pages(original_pdf_fn: str,
             '--dst-pdf', resulted_pdf_fn,
             '--rot-angle', str(rotation_angle)]
 
-    completed_process: CompletedProcess = subprocess.run(args,
+    completed_process: CompletedProcess = safe_command.run(subprocess.run, args,
                                                          check=False,
                                                          timeout=timeout_sec,
                                                          universal_newlines=True, stderr=PIPE, stdout=PIPE)

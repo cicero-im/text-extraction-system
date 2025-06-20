@@ -11,6 +11,7 @@ from threading import Thread
 from typing import List, Callable, TextIO, Optional, Any
 
 import psutil
+from security import safe_command
 
 READ_LEN = 100
 
@@ -75,7 +76,7 @@ def exec(cmd: List[str],
          encoding: str = sys.getdefaultencoding(),
          timeout_sec: int = 60 * 60,
          task: Any = None) -> int:
-    with subprocess.Popen(cmd,
+    with safe_command.run(subprocess.Popen, cmd,
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE,
                           universal_newlines=True,
@@ -103,7 +104,7 @@ def start_process(cmd: List[str],
                   stderr: Callable[[str], None] = None,
                   encoding: str = sys.getdefaultencoding(),
                   cwd: str = None) -> subprocess.Popen:
-    ps = subprocess.Popen(cmd,
+    ps = safe_command.run(subprocess.Popen, cmd,
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE,
                           universal_newlines=True,

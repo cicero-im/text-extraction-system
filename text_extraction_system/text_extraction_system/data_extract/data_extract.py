@@ -42,6 +42,7 @@ from text_extraction_system_api.dto import PlainTextParagraph, PlainTextSection,
     PlainTableOfContentsRecord
 from text_extraction_system_api.pdf_coordinates.pdf_coords_common import find_page_by_smb_index
 from text_extraction_system_api.pdf_coordinates.coord_text_map import CoordTextMap
+from security import safe_command
 
 log = getLogger(__name__)
 PAGE_SEPARATOR = '\n\n\f'
@@ -91,7 +92,7 @@ def extract_text_and_structure(pdf_fn: str,
             if render_coords_debug:
                 args.append('-render_char_rects')
 
-        completed_process: CompletedProcess = subprocess.run(args, check=False, timeout=timeout_sec,
+        completed_process: CompletedProcess = safe_command.run(subprocess.run, args, check=False, timeout=timeout_sec,
                                                              universal_newlines=True, stderr=PIPE, stdout=PIPE)
         try:
             log.info('Page rotation data:')
@@ -403,7 +404,7 @@ def should_correct_rotation(pdf_fn: str, rot_status: PageRotationStatus) -> bool
 
     # compare area, occupied by image parts (that might be text) and the rest of the page
     try:
-        p = subprocess.Popen(args, stderr=PIPE, stdout=PIPE)
+        p = safe_command.run(subprocess.Popen, args, stderr=PIPE, stdout=PIPE)
         (out, err) = p.communicate()
         symbol_count = int(out.decode("utf-8"))
     except Exception as e:

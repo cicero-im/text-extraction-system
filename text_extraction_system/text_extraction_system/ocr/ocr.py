@@ -12,6 +12,7 @@ import regex as re
 from PIL import Image
 
 from text_extraction_system.constants import TESSERACT_DEFAULT_LANGUAGE
+from security import safe_command
 
 log = getLogger(__name__)
 
@@ -39,7 +40,7 @@ def get_page_orientation(page_image_fn: str,
         args.append(ocr_results_path)
         env = os.environ.copy()
         log.debug(f'Executing tesseract to check orientation: {args}')
-        proc = Popen(args, env=env, stdout=PIPE, stderr=PIPE)
+        proc = safe_command.run(Popen, args, env=env, stdout=PIPE, stderr=PIPE)
         try:
             _data, err = proc.communicate(timeout=timeout)
         except TimeoutExpired as te:
@@ -99,7 +100,7 @@ def ocr_page_to_pdf(page_image_fn: str,
         args.append(dstfn)
         env = os.environ.copy()
         log.debug(f'Executing tesseract: {args}')
-        proc = Popen(args, env=env, stdout=PIPE, stderr=PIPE)
+        proc = safe_command.run(Popen, args, env=env, stdout=PIPE, stderr=PIPE)
         try:
             data, err = proc.communicate(timeout=timeout)
         except TimeoutExpired as te:
@@ -196,7 +197,7 @@ def image_to_osd(page_image_fn: str, timeout: int = 180, dpi: int = 300) -> OSD:
         args = ['tesseract', page_image_fn, 'stdout', '--psm', '0', '--dpi', str(dpi)]
         env = os.environ.copy()
         log.debug(f'Executing tesseract: {args}')
-        proc = Popen(args, env=env, stdout=PIPE, stderr=PIPE)
+        proc = safe_command.run(Popen, args, env=env, stdout=PIPE, stderr=PIPE)
         try:
             data, err = proc.communicate(timeout=timeout)
         except TimeoutExpired as te:

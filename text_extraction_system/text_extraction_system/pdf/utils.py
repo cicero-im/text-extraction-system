@@ -13,6 +13,7 @@ from pikepdf import PdfError
 from text_extraction_system.locking.socket_lock import get_lock
 from text_extraction_system.pdf.errors import OutputPDFDoesNotExistAfterConversion
 from text_extraction_system.processes import render_process_msg, InjuredDocumentError
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ def run_process(args, timeout: int) -> CompletedProcess:
     """
     Runs subprocess
     """
-    return subprocess.run(args, check=False, timeout=timeout, universal_newlines=True,
+    return safe_command.run(subprocess.run, args, check=False, timeout=timeout, universal_newlines=True,
                           stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
 
