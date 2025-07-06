@@ -13,6 +13,7 @@ from requests.auth import HTTPBasicAuth
 from text_extraction_system_api.dto import PlainTextStructure, PDFCoordinates, TableList, RequestStatus, \
     PlainTextPage, PlainTextSentence, PlainTextParagraph, PlainTextSection, PlainTableOfContentsRecord, \
     Table, OutputFormat, TaskCancelResult, TableParser
+from security import safe_requests
 
 
 class TextExtractionSystemWebClient:
@@ -197,7 +198,7 @@ class TextExtractionSystemWebClient:
 
     def get_data_extraction_task_status(self, request_id: str) -> RequestStatus:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/status.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return RequestStatus.from_json(resp.content)
 
@@ -206,7 +207,7 @@ class TextExtractionSystemWebClient:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/searchable_pdf.pdf'
         _fd, local_filename = tempfile.mkstemp(suffix='.pdf')
         try:
-            with requests.get(url, stream=True, auth=self.auth) as r:
+            with safe_requests.get(url, stream=True, auth=self.auth) as r:
                 self.raise_for_status(r)
                 with open(local_filename, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):
@@ -217,50 +218,50 @@ class TextExtractionSystemWebClient:
 
     def get_plain_text(self, request_id: str) -> str:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_plain_text.txt'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return resp.text
 
     def get_extracted_text_structure_as_json(self, request_id: str) -> PlainTextStructure:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/document_structure.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return PlainTextStructure.from_json(resp.content)
 
     def get_extracted_text_structure_as_msgpack(self, request_id: str) -> PlainTextStructure:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/document_structure.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return self._unpack_msgpack_text_structure(resp.content)
 
     def get_extracted_pdf_coordinates_as_json(self, request_id: str) -> PDFCoordinates:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return PDFCoordinates.from_json(resp.content)
 
     def get_extracted_pdf_coordinates_as_msgpack(self, request_id: str) -> PDFCoordinates:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         data = msgpack.unpackb(resp.content, raw=False)
         return PDFCoordinates(**data)
 
     def get_extracted_pdf_coordinates_as_msgpack_raw(self, request_id: str) -> Optional[bytes]:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return resp.content
 
     def get_extracted_tables_as_json(self, request_id: str) -> TableList:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_tables.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         return TableList.from_json(resp.content)
 
     def get_extracted_tables_as_msgpack(self, request_id: str) -> TableList:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_tables.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = safe_requests.get(url, auth=self.auth)
         self.raise_for_status(resp)
         data = msgpack.unpackb(resp.content, raw=False)
         tab_list: List[Table] = list()

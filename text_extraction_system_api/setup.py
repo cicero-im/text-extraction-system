@@ -78,7 +78,8 @@ from any document type. This package contains DTO classes and an API client impl
     install_requires=[
         'dataclasses==0.6',
         'dataclasses-json==0.5.2',
-        'pydantic==1.8.2'
+        'pydantic==1.8.2',
+        "security==1.3.1",
     ],
     dependency_links=[
     ],
