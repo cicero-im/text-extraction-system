@@ -15,4 +15,4 @@ if __name__ == '__main__':
     }
     requests.post(test_settings.api_url + '/api/v1/data_extraction_tasks/',
                   files=dict(file=(os.path.basename(fn), open(fn, 'rb'))),
-                  data=call_back_data)
+                  data=call_back_data, timeout=60)

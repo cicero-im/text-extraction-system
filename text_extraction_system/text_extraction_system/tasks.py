@@ -569,7 +569,7 @@ def deliver_results(req: RequestCallbackInfo, req_status: RequestStatus):
     if req.call_back_url:
         try:
             log.info(f'{req.original_file_name} | POSTing the extraction results to {req.call_back_url}...')
-            requests.post(req.call_back_url, json=req_status.to_dict())
+            requests.post(req.call_back_url, json=req_status.to_dict(), timeout=60)
         except Exception as err:
             log.error(f'{req.original_file_name} | Unable to POST the extraction results to {req.call_back_url}',
                       exc_info=err)
@@ -604,7 +604,7 @@ def deliver_estimate(req: RequestCallbackInfo, req_estimate: RequestEstimate):
     if req.call_back_estimate_url:
         try:
             log.info(f'{req.original_file_name} | POSTing the estimate results to {req.call_back_estimate_url}...')
-            requests.post(req.call_back_estimate_url, json=req_estimate.to_dict())
+            requests.post(req.call_back_estimate_url, json=req_estimate.to_dict(), timeout=60)
         except Exception as err:
             log.error(f'{req.original_file_name} | Unable to POST the estimate results to {req.call_back_estimate_url}',
                       exc_info=err)
@@ -614,7 +614,7 @@ def deliver_progress(req: RequestCallbackInfo, req_progress: RequestProgress):
     if req.call_back_progress_url:
         try:
             log.info(f'{req.original_file_name} | POSTing the progress results to {req.call_back_progress_url}...')
-            requests.post(req.call_back_progress_url, json=req_progress.to_dict())
+            requests.post(req.call_back_progress_url, json=req_progress.to_dict(), timeout=60)
         except Exception as err:
             log.error(f'{req.original_file_name} | Unable to POST the progress results to {req.call_back_progress_url}',
                       exc_info=err)

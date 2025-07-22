@@ -124,8 +124,8 @@ class TextExtractionSystemWebClient:
                 'page_ocr_timeout_sec': page_ocr_timeout_sec,
                 'remove_ocr_layer': remove_ocr_layer,
                 'detect_orientation_tesseract': detect_orientation_tesseract
-            }
-        )
+            }, 
+        timeout=60)
         if resp.status_code not in {200, 201}:
             self.raise_for_status(resp)
         return json.loads(resp.content)
@@ -190,14 +190,14 @@ class TextExtractionSystemWebClient:
                                        table_parser=table_parser.value,
                                        page_ocr_timeout_sec=page_ocr_timeout_sec,
                                        remove_ocr_layer=remove_ocr_layer,
-                                       detect_orientation_tesseract=detect_orientation_tesseract))
+                                       detect_orientation_tesseract=detect_orientation_tesseract), timeout=60)
         if resp.status_code not in {200, 201}:
             self.raise_for_status(resp)
         return json.loads(resp.content)
 
     def get_data_extraction_task_status(self, request_id: str) -> RequestStatus:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/status.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return RequestStatus.from_json(resp.content)
 
@@ -206,7 +206,7 @@ class TextExtractionSystemWebClient:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/searchable_pdf.pdf'
         _fd, local_filename = tempfile.mkstemp(suffix='.pdf')
         try:
-            with requests.get(url, stream=True, auth=self.auth) as r:
+            with requests.get(url, stream=True, auth=self.auth, timeout=60) as r:
                 self.raise_for_status(r)
                 with open(local_filename, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):
@@ -217,50 +217,50 @@ class TextExtractionSystemWebClient:
 
     def get_plain_text(self, request_id: str) -> str:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_plain_text.txt'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return resp.text
 
     def get_extracted_text_structure_as_json(self, request_id: str) -> PlainTextStructure:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/document_structure.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return PlainTextStructure.from_json(resp.content)
 
     def get_extracted_text_structure_as_msgpack(self, request_id: str) -> PlainTextStructure:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/document_structure.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return self._unpack_msgpack_text_structure(resp.content)
 
     def get_extracted_pdf_coordinates_as_json(self, request_id: str) -> PDFCoordinates:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return PDFCoordinates.from_json(resp.content)
 
     def get_extracted_pdf_coordinates_as_msgpack(self, request_id: str) -> PDFCoordinates:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         data = msgpack.unpackb(resp.content, raw=False)
         return PDFCoordinates(**data)
 
     def get_extracted_pdf_coordinates_as_msgpack_raw(self, request_id: str) -> Optional[bytes]:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/pdf_coordinates.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return resp.content
 
     def get_extracted_tables_as_json(self, request_id: str) -> TableList:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_tables.json'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return TableList.from_json(resp.content)
 
     def get_extracted_tables_as_msgpack(self, request_id: str) -> TableList:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/extracted_tables.msgpack'
-        resp = requests.get(url, auth=self.auth)
+        resp = requests.get(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         data = msgpack.unpackb(resp.content, raw=False)
         tab_list: List[Table] = list()
@@ -270,12 +270,12 @@ class TextExtractionSystemWebClient:
 
     def delete_data_extraction_task_files(self, request_id: str):
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/results/'
-        resp = requests.delete(url, auth=self.auth)
+        resp = requests.delete(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
 
     def purge_data_extraction_task(self, request_id: str) -> TaskCancelResult:
         url = f'{self.base_url}/api/v1/data_extraction_tasks/{request_id}/'
-        resp = requests.delete(url, auth=self.auth)
+        resp = requests.delete(url, auth=self.auth, timeout=60)
         self.raise_for_status(resp)
         return TaskCancelResult.from_json(resp.content)
 
@@ -313,7 +313,7 @@ class TextExtractionSystemWebClient:
                                        doc_language=doc_language,
                                        glyph_enhancing=glyph_enhancing,
                                        char_coords_debug_enable=char_coords_debug_enable,
-                                       output_format=output_format.value))
+                                       output_format=output_format.value), timeout=60)
         if resp.status_code not in {200, 201}:
             self.raise_for_status(resp)
         return resp.text
@@ -339,7 +339,7 @@ class TextExtractionSystemWebClient:
                                          doc_language=doc_language,
                                          glyph_enhancing=glyph_enhancing,
                                          char_coords_debug_enable=char_coords_debug_enable,
-                                         output_format=output_format.value), stream=True) as r:
+                                         output_format=output_format.value), stream=True, timeout=60) as r:
                 if r.status_code not in {200, 201}:
                     self.raise_for_status(r)
                 with open(local_filename, 'wb') as f:
@@ -370,7 +370,7 @@ class TextExtractionSystemWebClient:
                                          doc_language=doc_language,
                                          glyph_enhancing=glyph_enhancing,
                                          char_coords_debug_enable=char_coords_debug_enable,
-                                         output_format=output_format.value), stream=True) as r:
+                                         output_format=output_format.value), stream=True, timeout=60) as r:
                 if r.status_code not in {200, 201}:
                     self.raise_for_status(r)
                 with open(local_filename, 'wb') as f:
