@@ -32,7 +32,7 @@ idna==3.3
 iniconfig==1.1.1
 joblib==1.1.0
 kombu==5.0.2
-lxml==4.9.0
+lxml==6.1.0
 marshmallow-enum==1.5.1
 marshmallow==3.8.0
 msgpack==1.0.2
