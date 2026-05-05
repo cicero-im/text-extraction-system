@@ -55,7 +55,7 @@
     "@uppy/tus": "^1.8.4",
     "@webpack-cli/init": "^1.1.2",
     "antd": "^4.11.2",
-    "axios": "^0.21.1",
+    "axios": "^0.31.1",
     "dotenv": "^8.2.0",
     "mobx": "^6.1.7",
     "mobx-react": "^7.1.0",
