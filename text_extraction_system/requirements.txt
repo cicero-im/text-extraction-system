@@ -28,7 +28,7 @@ fasttext==0.9.2
 gensim==4.1.2
 h11==0.13.0
 https://github.com/LexPredict/pdfminer.six/archive/20210513-grid-fix.zip
-idna==3.3
+idna==3.15
 iniconfig==1.1.1
 joblib==1.1.0
 kombu==5.0.2
