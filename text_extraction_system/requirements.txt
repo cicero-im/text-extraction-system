@@ -69,7 +69,7 @@ scipy==1.8.1
 six==1.16.0
 smart-open==6.0.0
 sortedcontainers==2.4.0
-starlette==0.13.6
+starlette==1.0.1
 stringcase==1.2.0
 threadpoolctl==3.1.0
 toml==0.10.2
