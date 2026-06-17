@@ -59,7 +59,7 @@ pytest==6.1.1
 python-dateutil==2.8.2
 python-dotenv==0.14.0
 python-magic==0.4.26
-python-multipart==0.0.5
+python-multipart==0.0.31
 redis==3.5.3
 regex==2022.3.2
 requests==2.27.1
