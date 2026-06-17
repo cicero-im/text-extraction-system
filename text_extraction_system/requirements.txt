@@ -17,7 +17,7 @@ click-didyoumean==0.3.0
 click-repl==0.2.0
 click==7.1.2
 coverage==6.4.1
-cryptography==37.0.4
+cryptography==48.0.1
 dataclasses-json==0.5.2
 dataclasses==0.6
 dateparser==1.1.1
