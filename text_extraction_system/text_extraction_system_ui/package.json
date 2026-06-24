@@ -16,7 +16,7 @@
   "author": "LexPredict",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@types/jest": "^26.0.20",
